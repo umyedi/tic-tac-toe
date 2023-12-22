@@ -1,13 +1,26 @@
+"""
+Jeu de Morpion
+
+Ce script Python implémente un jeu de morpion avec la librairie Pygame.
+
+Le jeu est consitué de trois classes principales :
+- Morpion : Gère la logique du jeu, notamment la vérification du gagnant, d'une égalité et les coups du joueur/bot.
+- InterfaceUtilisateur : S'occupe de l'interface utilisateur pour afficher le rendu du jeu.
+- GestionnaireJeu : Orchestre le jeu en intéragissant avec les deux classes précédentes.
+
+Note : Assurez-vous d'avoir le module Pygame installé.
+"""
+
 import pygame
-import random
+import random as rd
 from typing import List
 from time import sleep
 
 NOIR = (0, 0, 0)
 BLANC = (255, 255, 255)
-ROUGE = (255, 0, 0)
 VERT = (0, 255, 0)
-BLEU = (0, 0, 255)
+COULEUR_JOUEUR =  (rd.randint(0, 200), rd.randint(0, 200), rd.randint(0, 200))
+COULEUR_BOT = (255 - COULEUR_JOUEUR[0], 255 - COULEUR_JOUEUR[1], 255 - COULEUR_JOUEUR[2])
 
 class Morpion:
     def __init__(self):
@@ -115,7 +128,7 @@ class Morpion:
             (i, j) for i in range(3) for j in range(3) if self.grille[i][j] == 0
         ]
         if coords_valides:
-            coord = random.choice(coords_valides)
+            coord = rd.choice(coords_valides)
             self.grille[coord[0]][coord[1]] = -1
             return True
         return False
@@ -197,8 +210,8 @@ class InterfaceUtilisateur:
                 i * self.hauteur // 3 + 2 * self.hauteur // 9 # y2
             ]
         ]
-        pygame.draw.line(self.fenetre, ROUGE, coord_ligne_1[0], coord_ligne_1[1], 10)
-        pygame.draw.line(self.fenetre, ROUGE, coord_ligne_2[0], coord_ligne_2[1], 10)
+        pygame.draw.line(self.fenetre, COULEUR_JOUEUR, coord_ligne_1[0], coord_ligne_1[1], 10)
+        pygame.draw.line(self.fenetre, COULEUR_JOUEUR, coord_ligne_2[0], coord_ligne_2[1], 10)
 
     def dessiner_cercle(self, i: int, j: int):
         """
@@ -210,7 +223,7 @@ class InterfaceUtilisateur:
         """
         rayon = max(self.largeur // 15, self.hauteur // 15)
         pygame.draw.circle(
-            self.fenetre, BLEU, (j * self.largeur // 3 + self.largeur // 6, i * self.hauteur // 3 + self.hauteur // 6), rayon, 10
+            self.fenetre, COULEUR_BOT, (j * self.largeur // 3 + self.largeur // 6, i * self.hauteur // 3 + self.hauteur // 6), rayon, 10
         )
 
     def afficher_message_victoire(self, gagnant: int):
@@ -223,7 +236,7 @@ class InterfaceUtilisateur:
         if gagnant == 1:
             message_victoire = self.police.render("VOUS AVEZ GAGNÉ", False, VERT)
         elif gagnant == -1:
-            message_victoire = self.police.render("VOUS AVEZ PERDU", False, ROUGE)
+            message_victoire = self.police.render("VOUS AVEZ PERDU", False, COULEUR_JOUEUR)
         else:
             message_victoire = self.police.render("ÉGALITÉ", False, BLANC)
 

@@ -12,15 +12,15 @@ Note: Ensure you have the Pygame library installed to run this script.
 """
 
 import pygame
-import random
+import random as rd
 from typing import List
 from time import sleep
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-RED = (255, 0, 0)
 GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
+PLAYER_COLOR = (rd.randint(0, 200), rd.randint(0, 200), rd.randint(0, 200))
+BOT_COLOR = (255 - PLAYER_COLOR[0], 255 - PLAYER_COLOR[1], 255 - PLAYER_COLOR[2])
 
 
 class TicTacToe:
@@ -129,7 +129,7 @@ class TicTacToe:
             (i, j) for i in range(3) for j in range(3) if self.grid[i][j] == 0
         ]
         if valid_coords:
-            coord = random.choice(valid_coords)
+            coord = rd.choice(valid_coords)
             self.grid[coord[0]][coord[1]] = -1
             return True
         return False
@@ -194,26 +194,30 @@ class UserInterface:
         """
         coords_line_1 = [
             [
-                j * self.width // 3 + self.width // 9, # x1
-                i * self.height // 3 + self.height // 9 # y1
+                j * self.width // 3 + self.width // 9,  # x1
+                i * self.height // 3 + self.height // 9,  # y1
             ],
             [
-                j * self.width // 3 + 2 * self.width // 9, # x2
-                i * self.height // 3 + 2 * self.height // 9 # y2
-            ]
+                j * self.width // 3 + 2 * self.width // 9,  # x2
+                i * self.height // 3 + 2 * self.height // 9,  # y2
+            ],
         ]
         coords_line_2 = [
             [
-                j * self.width // 3 + 2 * self.width // 9, # x1
-                i * self.height // 3 + self.height // 9 # y1
+                j * self.width // 3 + 2 * self.width // 9,  # x1
+                i * self.height // 3 + self.height // 9,  # y1
             ],
             [
-                j * self.width // 3 + self.width // 9, # x2
-                i * self.height // 3 + 2 * self.height // 9 # y2
-            ]
+                j * self.width // 3 + self.width // 9,  # x2
+                i * self.height // 3 + 2 * self.height // 9,  # y2
+            ],
         ]
-        pygame.draw.line(self.window, RED, coords_line_1[0], coords_line_1[1], 10)
-        pygame.draw.line(self.window, RED, coords_line_2[0], coords_line_2[1], 10)
+        pygame.draw.line(
+            self.window, PLAYER_COLOR, coords_line_1[0], coords_line_1[1], 10
+        )
+        pygame.draw.line(
+            self.window, PLAYER_COLOR, coords_line_2[0], coords_line_2[1], 10
+        )
 
     def draw_circle(self, i: int, j: int):
         """
@@ -223,9 +227,16 @@ class UserInterface:
             i (int): Row index.
             j (int): Column index.
         """
-        radius = max(self.width//15, self.height//15)
+        radius = max(self.width // 15, self.height // 15)
         pygame.draw.circle(
-            self.window, BLUE, (j*self.width//3 + self.width // 6, i*self.height//3 + self.height // 6), radius, 10
+            self.window,
+            BOT_COLOR,
+            (
+                j * self.width // 3 + self.width // 6,
+                i * self.height // 3 + self.height // 6,
+            ),
+            radius,
+            10,
         )
 
     def display_win_message(self, winner: int):
@@ -238,11 +249,11 @@ class UserInterface:
         if winner == 1:
             win_message = self.font.render("YOU WON", False, GREEN)
         elif winner == -1:
-            win_message = self.font.render("YOU LOST", False, RED)
+            win_message = self.font.render("YOU LOST", False, PLAYER_COLOR)
         else:
             win_message = self.font.render("DRAW", False, WHITE)
 
-        text_rect = win_message.get_rect(center=(self.width/2, self.height/2))
+        text_rect = win_message.get_rect(center=(self.width / 2, self.height / 2))
         self.window.fill(BLACK, text_rect)
         self.window.blit(win_message, text_rect)
 
@@ -298,7 +309,6 @@ class GameController:
             pygame.display.update()
             sleep(2)
             self.running = False
-
 
 
 if __name__ == "__main__":
